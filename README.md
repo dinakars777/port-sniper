@@ -2,7 +2,7 @@
 
 > A blazing fast, beautiful CLI tool to instantly identify and kill processes hoarding your local development ports.
 
-![port-sniper screenshot](./screenshot.png) *(Imagine a beautiful clack-based terminal here)*
+> *(A beautiful, interactive CLI built with `@clack/prompts`)*
 
 ## The Problem
 Getting the dreaded `EADDRINUSE: address already in use :::3000` error happens multiple times a day. You usually have to Google `lsof -i :3000`, copy the PID, and type `kill -9 <PID>`.
