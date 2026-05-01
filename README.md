@@ -10,10 +10,10 @@ Getting `EADDRINUSE: address already in use :::3000` multiple times a day? You u
 
 ## Features
 
-- ✨ Zero configuration — just type `snipe <port>`
-- 🎨 Beautiful UI powered by `@clack/prompts`
-- ⚡ Lightning fast — uses native `lsof` and `kill -9` under the hood
-- 🛡️ Interactive safety prompt before killing anything
+- ✨ Zero config — just `snipe <port>`
+- 🎨 Clean UI via `@clack/prompts`
+- ⚡ Fast — uses native `lsof` and `kill -9`
+- 🛡️ Safety prompt before killing
 
 ## Quick Start
 
