@@ -2,7 +2,7 @@
 
 import { Command } from 'commander';
 import pc from 'picocolors';
-import { findProcessesOnPort, killProcess } from './core';
+import { findProcessesOnPort, killProcess, normalizePort } from './core';
 import { showIntro, showSuccess, showError, promptToKillProcess } from './ui';
 
 const program = new Command();
@@ -16,9 +16,12 @@ program
 program.parse(process.argv);
 
 async function main() {
-    const port = program.args[0];
+    const rawPort = program.args[0];
+    let port: string;
 
-    if (!port || isNaN(Number(port))) {
+    try {
+        port = normalizePort(rawPort);
+    } catch {
         console.error(pc.red('✖ Error: Please provide a valid port number.'));
         console.log(pc.dim('Example: npx @dinakars777/port-sniper 3000'));
         process.exit(1);

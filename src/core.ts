@@ -1,4 +1,4 @@
-import { execSync } from 'child_process';
+import { execFileSync } from 'child_process';
 
 export interface ProcessInfo {
     command: string;
@@ -7,16 +7,50 @@ export interface ProcessInfo {
     port: string;
 }
 
+export function normalizePort(port: string | number): string {
+    const value = String(port).trim();
+
+    if (!/^\d+$/.test(value)) {
+        throw new Error('Port must be a whole number.');
+    }
+
+    const parsedPort = Number(value);
+
+    if (!Number.isInteger(parsedPort) || parsedPort < 1 || parsedPort > 65535) {
+        throw new Error('Port must be between 1 and 65535.');
+    }
+
+    return String(parsedPort);
+}
+
+function normalizePid(pid: string | number): string {
+    const value = String(pid).trim();
+
+    if (!/^\d+$/.test(value)) {
+        throw new Error('PID must be a whole number.');
+    }
+
+    const parsedPid = Number(value);
+
+    if (!Number.isSafeInteger(parsedPid) || parsedPid < 1) {
+        throw new Error('PID must be a positive integer.');
+    }
+
+    return String(parsedPid);
+}
+
 /**
  * Finds processes running on a specific port using `lsof`.
  */
 export function findProcessesOnPort(port: string | number): ProcessInfo[] {
+    const normalizedPort = normalizePort(port);
+
     try {
         // -i :port looking for INET connections
         // -P inhibits the conversion of port numbers to port names
         // -n inhibits the conversion of network numbers to host names
-        const output = execSync(`lsof -i :${port} -P -n`, { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] });
-        return parseLsofOutput(output, String(port));
+        const output = execFileSync('lsof', ['-i', `:${normalizedPort}`, '-P', '-n'], { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] });
+        return parseLsofOutput(output, normalizedPort);
     } catch (error: any) {
         // lsof returns exit code 1 if no process is found. 
         // This is expected behavior, so we return an empty array.
@@ -27,7 +61,7 @@ export function findProcessesOnPort(port: string | number): ProcessInfo[] {
 /**
  * Parses the raw text output of the lsof command into structured ProcessInfo objects.
  */
-function parseLsofOutput(output: string, port: string): ProcessInfo[] {
+export function parseLsofOutput(output: string, port: string): ProcessInfo[] {
     const lines = output.split('\n').filter(line => line.trim().length > 0);
 
     if (lines.length <= 1) return []; // Only header row
@@ -55,9 +89,9 @@ function parseLsofOutput(output: string, port: string): ProcessInfo[] {
 /**
  * Forcefully kills a process by its PID using `kill -9`.
  */
-export function killProcess(pid: string): boolean {
+export function killProcess(pid: string | number): boolean {
     try {
-        execSync(`kill -9 ${pid}`, { stdio: 'ignore' });
+        execFileSync('kill', ['-9', normalizePid(pid)], { stdio: 'ignore' });
         return true;
     } catch (error) {
         return false;

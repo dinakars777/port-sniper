@@ -10,7 +10,8 @@
   "scripts": {
     "build": "tsup src/index.ts --format cjs --clean",
     "dev": "ts-node src/index.ts",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "test": "node --test -r ts-node/register test/**/*.test.ts"
   },
   "keywords": [
     "cli",
