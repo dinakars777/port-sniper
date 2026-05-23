@@ -42,7 +42,7 @@ snipe 8080
 | Package | Purpose |
 |---|---|
 | `@clack/prompts` | Beautiful interactive CLI UI |
-| `execa` | Native process execution |
+| Node `child_process` | Native `lsof` and `kill` execution |
 | TypeScript | Type-safe implementation |
 
 ## Contributing
